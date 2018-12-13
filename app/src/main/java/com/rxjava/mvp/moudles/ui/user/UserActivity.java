@@ -1,16 +1,13 @@
 package com.rxjava.mvp.moudles.ui.user;
 
-import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.hjq.base.BaseActivity;
 import com.rxjava.mvp.R;
 import com.rxjava.mvp.common.base.MyActivity;
 import com.rxjava.mvp.moudles.bean.UserInfo;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
