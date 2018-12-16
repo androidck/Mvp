@@ -28,9 +28,10 @@ public abstract class MyActivity extends UIActivity
         implements OnTitleBarListener,NetBroadcastReceiver.NetChangeListener {
 
     private Unbinder mButterKnife;//View注解
-    private LayoutInflater mLayountInflater;
 
     public static NetBroadcastReceiver.NetChangeListener listener;
+
+
 
     /**
      * 网络类型
@@ -53,9 +54,7 @@ public abstract class MyActivity extends UIActivity
             registerReceiver(netBroadcastReceiver, filter);
         }
         checkNet();
-        mLayountInflater=LayoutInflater.from(this);
     }
-
 
     /**
      * 初始化时判断有没有网络
@@ -103,6 +102,7 @@ public abstract class MyActivity extends UIActivity
         super.init();
     }
 
+
     /**
      * 初始化横竖屏方向，会和 LauncherTheme 主题样式有冲突，注意不要同时使用
      */
@@ -122,9 +122,7 @@ public abstract class MyActivity extends UIActivity
         this.netType = netMobile;
         if (!isNetConnect()) {
             toast("网络异常，请检查网络");
-            addErrorNetWorkView(0);
         } else {
-            addErrorNetWorkView(1);
         }
     }
 
@@ -205,15 +203,10 @@ public abstract class MyActivity extends UIActivity
     }
 
 
-    //添加网络异常布局
-    public void addErrorNetWorkView(int type){
-        AutoRelativeLayout.LayoutParams lp = new AutoRelativeLayout.LayoutParams(
-                AutoRelativeLayout.LayoutParams.MATCH_PARENT, AutoRelativeLayout.LayoutParams.MATCH_PARENT);
-        View view = mLayountInflater.inflate(R.layout.error_network, null);
-        if (type==0){
-            MyActivity.this.addContentView(view,lp);
-        }else {
-            view.setVisibility(View.GONE);
-        }
-    }
+
+    /**
+     * 网络状态
+     */
+
+
 }

@@ -46,15 +46,7 @@ public class MainActivity extends MyActivity implements MainContract.View  {
     protected void initView() {
 
     }
-    //设置圆角北京
-    private Drawable setDrawable(String colorStr) {
-        RoundRectShape rr = new RoundRectShape(new float[]{15, 15, 15, 15, 15, 15, 15, 15},
-                null, null); //60px = 20dp
-        ShapeDrawable drawable = new ShapeDrawable(rr);
-        drawable.getPaint().setColor(Color.parseColor(colorStr)); //指定填充颜色
-        drawable.getPaint().setStyle(Paint.Style.FILL); // 指定填充模式
-        return drawable;
-    }
+
     @Override
     protected void initData() {
         presenter = new MainPresenter(this, this);
@@ -73,6 +65,8 @@ public class MainActivity extends MyActivity implements MainContract.View  {
           e.printStackTrace();
       }
     }
+
+
 
 
     @Override
