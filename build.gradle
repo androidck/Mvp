@@ -12,9 +12,13 @@ buildscript {
 
 allprojects {
     repositories {
+        mavenCentral();
         jcenter()
         google()
         maven {url "https://jitpack.io"}
+        maven {
+            url 'http://maven.aliyun.com/nexus/content/groups/public/'
+        }
     }
 
     //解决app:mockableAndroidJar错误的问题

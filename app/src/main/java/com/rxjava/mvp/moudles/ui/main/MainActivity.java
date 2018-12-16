@@ -85,4 +85,6 @@ public class MainActivity extends MyActivity implements MainContract.View  {
     public void Error(String msg) {
         toast(msg);
     }
+
+
 }

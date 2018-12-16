@@ -1,11 +1,22 @@
 package com.rxjava.mvp.common.base;
 
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 import com.hjq.toast.ToastUtils;
+import com.rxjava.mvp.R;
+import com.rxjava.mvp.common.receiver.NetBroadcastReceiver;
+import com.rxjava.mvp.common.uitl.NetUtil;
+import com.rxjava.mvp.common.uitl.ViewUtil;
+import com.zhy.autolayout.AutoRelativeLayout;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -14,9 +25,66 @@ import butterknife.Unbinder;
  * 项目中的Activity
  */
 public abstract class MyActivity extends UIActivity
-        implements OnTitleBarListener {
+        implements OnTitleBarListener,NetBroadcastReceiver.NetChangeListener {
 
     private Unbinder mButterKnife;//View注解
+    private LayoutInflater mLayountInflater;
+
+    public static NetBroadcastReceiver.NetChangeListener listener;
+
+    /**
+     * 网络类型
+     */
+    private int netType;
+
+    private NetBroadcastReceiver netBroadcastReceiver;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        listener = this;
+        //Android 7.0以上需要动态注册
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            //实例化IntentFilter对象
+            IntentFilter filter = new IntentFilter();
+            filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+            netBroadcastReceiver = new NetBroadcastReceiver();
+            //注册广播接收
+            registerReceiver(netBroadcastReceiver, filter);
+        }
+        checkNet();
+        mLayountInflater=LayoutInflater.from(this);
+    }
+
+
+    /**
+     * 初始化时判断有没有网络
+     */
+    public boolean checkNet() {
+        this.netType = NetUtil.getNetWorkState(MyActivity.this);
+        if (!isNetConnect()) {
+            //网络异常，请检查网络
+            //showNetDialog();
+            toast("网络异常，请检查网络");
+        }
+        return isNetConnect();
+    }
+
+    /**
+     * 判断有无网络 。
+     *
+     * @return true 有网, false 没有网络.
+     */
+    public boolean isNetConnect() {
+        if (netType == 1) {
+            return true;
+        } else if (netType == 0) {
+            return true;
+        } else if (netType == -1) {
+            return false;
+        }
+        return false;
+    }
 
     @Override
     public void init() {
@@ -42,6 +110,21 @@ public abstract class MyActivity extends UIActivity
         //如果没有指定屏幕方向，则默认为竖屏
         if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+    }
+
+    /**
+     * 网络变化之后的类型
+     */
+    @Override
+    public void onChangeListener(int netMobile) {
+        // TODO Auto-generated method stub
+        this.netType = netMobile;
+        if (!isNetConnect()) {
+            toast("网络异常，请检查网络");
+            addErrorNetWorkView(0);
+        } else {
+            addErrorNetWorkView(1);
         }
     }
 
@@ -119,5 +202,18 @@ public abstract class MyActivity extends UIActivity
      */
     public void toast(CharSequence s) {
         ToastUtils.show(s);
+    }
+
+
+    //添加网络异常布局
+    public void addErrorNetWorkView(int type){
+        AutoRelativeLayout.LayoutParams lp = new AutoRelativeLayout.LayoutParams(
+                AutoRelativeLayout.LayoutParams.MATCH_PARENT, AutoRelativeLayout.LayoutParams.MATCH_PARENT);
+        View view = mLayountInflater.inflate(R.layout.error_network, null);
+        if (type==0){
+            MyActivity.this.addContentView(view,lp);
+        }else {
+            view.setVisibility(View.GONE);
+        }
     }
 }
